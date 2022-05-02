@@ -1,5 +1,5 @@
 //
-//  ImageViewerViewController.swift
+//  ImageDetailViewController.swift
 //  Telescope
 //
 //  Created by Rob Whitaker on 01/05/2022.
@@ -7,15 +7,14 @@
 
 import UIKit
 
-final class ImageViewerViewController: UIViewController {
+final class ImageDetailViewController: UIViewController {
     private var item: ImageItem?
     private lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.accessibilityIgnoresInvertColors = true
-        imageView.isAccessibilityElement = true
+        let imageView = InteractiveImageView()
         imageView.accessibilityLabel = item?.title
+        imageView.imageTapped = { [weak self] in
+            self?.imageTapped()
+        }
         return imageView
     }()
 
@@ -64,6 +63,8 @@ final class ImageViewerViewController: UIViewController {
 
         return contentStack
     }()
+
+    private var image: UIImage?
 
     convenience init(imageItem: ImageItem) {
         self.init()
@@ -119,6 +120,23 @@ final class ImageViewerViewController: UIViewController {
         ])
     }
 
+    @objc
+    private func imageTapped() {
+        guard let image = image else { return }
+        let imageViewer = ImageViewer(image: image)
+        imageViewer.frame = view.frame
+        imageViewer.accessibilityLabel = item?.title
+        view.addSubview(imageViewer)
+        view.bringSubviewToFront(imageViewer)
+
+        NSLayoutConstraint.activate([
+            imageViewer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            imageViewer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            imageViewer.topAnchor.constraint(equalTo: view.topAnchor),
+            imageViewer.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+
     private func getImage(url: String) {
         Task {
             let (image, _) = await FetchImage.fetchImage(url: url)
@@ -127,6 +145,7 @@ final class ImageViewerViewController: UIViewController {
             DispatchQueue.main.async { [weak self] in
                 self?.imageView.image = image
                 self?.imageButtonViewModel.image = image
+                self?.image = image
             }
         }
     }

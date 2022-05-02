@@ -113,7 +113,7 @@ final class SearchViewController: UIViewController {
         }
 
         viewModel.presentDetail = { [weak self] item in
-            let imageViewer = ImageViewerViewController(imageItem: item)
+            let imageViewer = ImageDetailViewController(imageItem: item)
             self?.navigationController?.pushViewController(imageViewer, animated: true)
         }
 
