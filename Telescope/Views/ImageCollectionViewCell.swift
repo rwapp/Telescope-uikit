@@ -11,6 +11,8 @@ final class ImageCollectionViewCell: UICollectionViewCell {
 
     static let reuseIdentifier = "ImageCollectionViewCell"
 
+    private let favourites = FavouriteStorage()
+
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.isAccessibilityElement = true
@@ -23,7 +25,14 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     private let titleLabel = TSLabel()
     private var viewModel: ImageCollectionViewCellViewModel?
 
-    private let likeButton = UIButton(configuration: .borderless())
+    private lazy var likeButton: UIButton = {
+        let button = UIButton(configuration: .borderless())
+        button.tintColor = .red
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(favouriteImage), for: .touchUpInside)
+
+        return button
+    }()
     private lazy var shareButton: UIButton = {
         let button = UIButton(configuration: .borderless())
         button.addTarget(self, action: #selector(shareImage), for: .touchUpInside)
@@ -44,11 +53,6 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         return button
     }()
     private lazy var buttonStack: UIStackView = {
-        likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
-        likeButton.accessibilityLabel = "Like"
-        likeButton.tintColor = .red
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
-
         let buttonStack = UIStackView(arrangedSubviews: [likeButton, shareButton, saveButton])
         buttonStack.alignment = .leading
         buttonStack.distribution = .equalSpacing
@@ -66,6 +70,11 @@ final class ImageCollectionViewCell: UICollectionViewCell {
             self.imageView.image = self.viewModel?.image
         }
 
+        viewModel.showLikeStatus = { [weak self] in
+            self?.setLikeStatus()
+        }
+
+        setLikeStatus()
         imageView.image = nil
         viewModel.getImage()
         setupView()
@@ -79,6 +88,23 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     @objc
     private func shareImage() {
         viewModel?.shareImage()
+    }
+
+    @objc
+    private func favouriteImage() {
+        viewModel?.favouriteImage()
+    }
+
+    private func setLikeStatus() {
+        let favourite = viewModel!.isFavourite
+        let imageName = favourite ? "heart.fill" : "heart"
+        likeButton.setImage(UIImage(systemName: imageName), for: .normal)
+        likeButton.accessibilityLabel = favourite ? "Liked" : "Like"
+        if favourite {
+            likeButton.accessibilityTraits.insert(.selected)
+        } else {
+            likeButton.accessibilityTraits.remove(.selected)
+        }
     }
 
     private func setupView() {

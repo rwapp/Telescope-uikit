@@ -17,12 +17,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
 
-            let navController = UINavigationController(rootViewController: SearchViewController())
-            navController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
-            navController.title = "Telescope"
+            let searchNavController = UINavigationController(rootViewController: SearchViewController())
+            searchNavController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
+
+            let favNavController = UINavigationController(rootViewController: FavouritesViewController())
+            favNavController.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
 
             let tabController = UITabBarController()
-            tabController.viewControllers = [navController]
+            tabController.viewControllers = [searchNavController, favNavController]
 
             window.rootViewController = tabController
             self.window = window

@@ -12,8 +12,13 @@ import KRProgressHUD
 final class ImageCollectionViewCellViewModel: NSObject {
     let item: ImageItem
     private(set) var image: UIImage?
+    private let favourites = FavouriteStorage()
+    var isFavourite: Bool {
+        favourites.isFavourite(image: item)
+    }
 
     var showImage: () -> Void = {}
+    var showLikeStatus: () -> Void = {}
 
     init(imageItem: ImageItem) {
         self.item = imageItem
@@ -29,6 +34,11 @@ final class ImageCollectionViewCellViewModel: NSObject {
                 self?.showImage()
             }
         }
+    }
+
+    func favouriteImage() {
+        favourites.setFavourite(!isFavourite, image: item)
+        showLikeStatus()
     }
 
     func shareImage() {

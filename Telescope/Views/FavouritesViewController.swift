@@ -1,17 +1,13 @@
 //
-//  SearchViewController.swift
+//  FavouritesViewController.swift
 //  Telescope
 //
-//  Created by Rob Whitaker on 26/04/2022.
+//  Created by Rob Whitaker on 02/05/2022.
 //
 
 import UIKit
 
-enum Section {
-    case images
-}
-
-final class SearchViewController: UIViewController {
+final class FavouritesViewController: UIViewController {
 
     private lazy var dataSource = UICollectionViewDiffableDataSource<Section, ImageItem>(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
         guard let cell = collectionView.dequeueReusableCell(
@@ -48,14 +44,9 @@ final class SearchViewController: UIViewController {
         let globe = NSTextAttachment()
         globe.image = UIImage(systemName: "globe.americas.fill", withConfiguration: config)
 
-        let arrow = NSTextAttachment()
-        arrow.image = UIImage(systemName: "arrow.up", withConfiguration: config)
-
         let imageString = NSMutableAttributedString(attachment: globe)
-        let textString = NSAttributedString(string: " Search for NASA images ")
+        let textString = NSAttributedString(string: " No favourited images")
         imageString.append(textString)
-        let arrowString = NSAttributedString(attachment: arrow)
-        imageString.append(arrowString)
 
         let label = TSLabel()
         label.attributedText = imageString
@@ -74,9 +65,7 @@ final class SearchViewController: UIViewController {
         return label
     }()
 
-    private var emptyString = "No images found"
-
-    private let viewModel = SearchViewModel()
+    private let viewModel = FavouritesViewModel()
     private let contentInserts = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
 
     override func viewDidLoad() {
@@ -87,7 +76,7 @@ final class SearchViewController: UIViewController {
         view.backgroundColor = .systemBackground
         welcomeLabel.isHidden = false
         collectionView.isHidden = true
-        title = "Telescope"
+        title = "Favourites"
 
         view.addSubview(collectionView)
         collectionView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
@@ -96,20 +85,13 @@ final class SearchViewController: UIViewController {
         collectionView.register(ImageCollectionViewCell.self,
                                 forCellWithReuseIdentifier: ImageCollectionViewCell.reuseIdentifier)
 
-        setupSearch()
+        reloadScreen()
+        showHint(viewModel.photos.isEmpty)
     }
 
     private func setupCallbacks() {
         viewModel.reloadResults = { [weak self] in
-            guard let self = self else { return }
-            var snapshot = NSDiffableDataSourceSnapshot<Section, ImageItem>()
-
-            let items = self.viewModel.photos
-
-            snapshot.appendSections([Section.images])
-            snapshot.appendItems(items)
-
-            self.dataSource.apply(snapshot)
+            self?.reloadScreen()
         }
 
         viewModel.presentDetail = { [weak self] item in
@@ -118,34 +100,36 @@ final class SearchViewController: UIViewController {
         }
 
         viewModel.showHint = { [weak self] show in
-            guard let self = self else { return }
-            if show {
-                self.collectionView.isHidden = true
-                self.welcomeLabel.text = self.emptyString
-                self.welcomeLabel.isHidden = false
-            } else {
-                self.collectionView.isHidden = false
-                self.welcomeLabel.isHidden = true
-            }
+            self?.showHint(show)
+
         }
     }
 
-    private func setupSearch() {
-        let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchResultsUpdater = self
-        navigationItem.searchController = searchController
+    private func reloadScreen() {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, ImageItem>()
+
+        let items = viewModel.photos
+
+        snapshot.appendSections([Section.images])
+        snapshot.appendItems(items)
+
+        dataSource.apply(snapshot)
+    }
+
+    private func showHint(_ show: Bool) {
+        if show {
+            collectionView.isHidden = true
+            welcomeLabel.isHidden = false
+        } else {
+            collectionView.isHidden = false
+            welcomeLabel.isHidden = true
+        }
     }
 }
 
-extension SearchViewController: UICollectionViewDelegate {
+extension FavouritesViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = dataSource.itemIdentifier(for: indexPath) else { return }
         viewModel.imageSelected(imageItem: item)
-    }
-}
-
-extension SearchViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        viewModel.search(searchController.searchBar.text)
     }
 }

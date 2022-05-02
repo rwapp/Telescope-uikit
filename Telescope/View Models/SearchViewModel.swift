@@ -36,7 +36,8 @@ final class SearchViewModel: NSObject {
                               title: $0.data.first!.title,
                               description: $0.data.first?.datumDescription,
                               center: $0.data.first?.center,
-                              date: $0.data.first!.dateCreated)
+                              date: $0.data.first!.dateCreated,
+                              nasaID: $0.data.first!.nasaID)
                 } ?? []
 
             DispatchQueue.main.async { [weak self] in
