@@ -7,9 +7,8 @@
 
 import Foundation
 import UIKit
-import KRProgressHUD
 
-final class ImageCollectionViewCellViewModel: NSObject {
+final class ImageCollectionViewCellViewModel {
     let item: ImageItem
     private(set) var image: UIImage?
     private let favourites = FavouriteStorage()
@@ -33,40 +32,6 @@ final class ImageCollectionViewCellViewModel: NSObject {
             DispatchQueue.main.async { [weak self] in
                 self?.showImage()
             }
-        }
-    }
-
-    func favouriteImage() {
-        favourites.setFavourite(!isFavourite, image: item)
-        showLikeStatus()
-    }
-
-    func shareImage() {
-        guard let image = image else { return }
-        let shareSheet = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-        shareSheet.completionWithItemsHandler = { _, success, _, error in
-            if !success || error != nil {
-                KRProgressHUD.showError(withMessage: "Failed to share image")
-            } else {
-                KRProgressHUD.showSuccess()
-            }
-        }
-        // TODO: present this properly
-        UIApplication.shared.windows.first?.rootViewController?.present(shareSheet, animated: true, completion: nil)
-    }
-
-    func saveImage() {
-        guard let image = image else { return }
-        KRProgressHUD.show()
-        UIImageWriteToSavedPhotosAlbum(image, self, #selector(imageSaved(_:didFinishSavingWithError:contextInfo:)), nil)
-    }
-
-    @objc
-    private func imageSaved(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        if error != nil {
-            KRProgressHUD.showError(withMessage: "Failed to save image")
-        } else {
-            KRProgressHUD.showSuccess()
         }
     }
 }

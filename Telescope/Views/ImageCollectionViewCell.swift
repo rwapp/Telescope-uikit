@@ -12,6 +12,9 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     static let reuseIdentifier = "ImageCollectionViewCell"
 
     private let favourites = FavouriteStorage()
+    private lazy var imageButtonViewModel = ImageButtonsViewModel()
+    private lazy var imageButtons = ImageButtons(viewModel: imageButtonViewModel)
+    private lazy var buttonStack = imageButtons.buttonStack
 
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
@@ -25,42 +28,6 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     private let titleLabel = TSLabel()
     private var viewModel: ImageCollectionViewCellViewModel?
 
-    private lazy var likeButton: UIButton = {
-        let button = UIButton(configuration: .borderless())
-        button.tintColor = .red
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(favouriteImage), for: .touchUpInside)
-
-        return button
-    }()
-    private lazy var shareButton: UIButton = {
-        let button = UIButton(configuration: .borderless())
-        button.addTarget(self, action: #selector(shareImage), for: .touchUpInside)
-        button.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
-        button.accessibilityLabel = "Share"
-        button.tintColor = .red
-        button.translatesAutoresizingMaskIntoConstraints = false
-
-        return button
-    }()
-    private lazy var saveButton: UIButton = {
-        let button = UIButton(configuration: .borderless())
-        button.addTarget(self, action: #selector(saveImage), for: .touchUpInside)
-        button.setImage(UIImage(systemName: "square.and.arrow.down"), for: .normal)
-        button.accessibilityLabel = "Save"
-        button.tintColor = .red
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    private lazy var buttonStack: UIStackView = {
-        let buttonStack = UIStackView(arrangedSubviews: [likeButton, shareButton, saveButton])
-        buttonStack.alignment = .leading
-        buttonStack.distribution = .equalSpacing
-        buttonStack.translatesAutoresizingMaskIntoConstraints = false
-
-        return buttonStack
-    }()
-
     func setViewModel(_ viewModel: ImageCollectionViewCellViewModel) {
         self.viewModel = viewModel
 
@@ -68,43 +35,18 @@ final class ImageCollectionViewCell: UICollectionViewCell {
             guard let self = self else { return }
             self.imageView.accessibilityLabel = self.viewModel?.item.title
             self.imageView.image = self.viewModel?.image
+            self.imageButtonViewModel.image = viewModel.image
         }
 
         viewModel.showLikeStatus = { [weak self] in
-            self?.setLikeStatus()
+            self?.imageButtons.setLikeStatus(viewModel.isFavourite)
         }
 
-        setLikeStatus()
+        imageButtonViewModel.item = viewModel.item
+        imageButtons.setLikeStatus(viewModel.isFavourite)
         imageView.image = nil
         viewModel.getImage()
         setupView()
-    }
-
-    @objc
-    private func saveImage() {
-        viewModel?.saveImage()
-    }
-
-    @objc
-    private func shareImage() {
-        viewModel?.shareImage()
-    }
-
-    @objc
-    private func favouriteImage() {
-        viewModel?.favouriteImage()
-    }
-
-    private func setLikeStatus() {
-        let favourite = viewModel!.isFavourite
-        let imageName = favourite ? "heart.fill" : "heart"
-        likeButton.setImage(UIImage(systemName: imageName), for: .normal)
-        likeButton.accessibilityLabel = favourite ? "Liked" : "Like"
-        if favourite {
-            likeButton.accessibilityTraits.insert(.selected)
-        } else {
-            likeButton.accessibilityTraits.remove(.selected)
-        }
     }
 
     private func setupView() {

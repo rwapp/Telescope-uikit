@@ -17,6 +17,10 @@ final class ImageViewerViewController: UIViewController {
         return imageView
     }()
 
+    private lazy var imageButtonViewModel = ImageButtonsViewModel()
+    private lazy var imageButtons = ImageButtons(viewModel: imageButtonViewModel)
+    private lazy var buttonStack = imageButtons.buttonStack
+
     private lazy var contentStack: UIStackView = {
         var descriptionLabels = [UILabel]()
 
@@ -62,6 +66,7 @@ final class ImageViewerViewController: UIViewController {
     convenience init(imageItem: ImageItem) {
         self.init()
         self.item = imageItem
+        imageButtonViewModel.item = item
     }
 
     override func viewDidLoad() {
@@ -78,6 +83,7 @@ final class ImageViewerViewController: UIViewController {
         contentView.addSubview(imageView)
         view.backgroundColor = .systemBackground
         contentView.addSubview(contentStack)
+        contentView.addSubview(buttonStack)
 
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -96,9 +102,13 @@ final class ImageViewerViewController: UIViewController {
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
 
+            buttonStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            buttonStack.bottomAnchor.constraint(equalTo: contentStack.topAnchor),
+            buttonStack.heightAnchor.constraint(greaterThanOrEqualToConstant: 44.0),
+
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageView.bottomAnchor.constraint(equalTo: contentStack.topAnchor, constant: -8),
+            imageView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -8),
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
 
             contentStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
@@ -114,6 +124,7 @@ final class ImageViewerViewController: UIViewController {
 
             DispatchQueue.main.async { [weak self] in
                 self?.imageView.image = image
+                self?.imageButtonViewModel.image = image
             }
         }
     }

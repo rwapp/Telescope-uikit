@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class SearchViewModel: NSObject {
+final class SearchViewModel {
 
     private(set) var photos = [ImageItem]()
     var reloadResults: () -> Void = {}
