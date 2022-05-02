@@ -14,6 +14,8 @@ final class ImageViewerViewController: UIViewController {
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.accessibilityIgnoresInvertColors = true
+        imageView.isAccessibilityElement = true
+        imageView.accessibilityLabel = item?.title
         return imageView
     }()
 

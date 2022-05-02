@@ -23,6 +23,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
+        imageView.accessibilityTraits.insert(.button)
         return imageView
     }()
     private let titleLabel = TSLabel()
