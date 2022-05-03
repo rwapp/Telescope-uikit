@@ -35,6 +35,8 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         imageButtonViewModel.item = viewModel.item
         imageButtons.setLikeStatus(viewModel.isFavourite)
         imageView.image = nil
+        imageView.content = CollectionImageView.Content(date: viewModel.item.dateString,
+                                                        description: viewModel.item.description)
         viewModel.getImage()
         setupView()
     }
