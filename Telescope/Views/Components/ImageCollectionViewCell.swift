@@ -15,17 +15,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     private lazy var imageButtonViewModel = ImageButtonsViewModel()
     private lazy var imageButtons = ImageButtons(viewModel: imageButtonViewModel)
     private lazy var buttonStack = imageButtons.buttonStack
-
-    private lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.isAccessibilityElement = true
-        imageView.accessibilityIgnoresInvertColors = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.accessibilityTraits.insert(.button)
-        return imageView
-    }()
+    private lazy var imageView = CollectionImageView()
     private let titleLabel = TSLabel()
     private var viewModel: ImageCollectionViewCellViewModel?
 
