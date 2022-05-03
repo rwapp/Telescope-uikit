@@ -21,4 +21,7 @@ struct ImageItem: Codable, Hashable {
         let formattedDate = dateFormatter.string(from: self.date)
         return formattedDate
     }
+    var liked: Bool {
+        FavouriteStorage().isFavourite(image: self)
+    }
 }
