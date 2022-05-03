@@ -31,14 +31,9 @@ final class ImageDetailViewController: UIViewController {
 
         descriptionLabels.append(titleLabel)
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
-        let formattedDate = dateFormatter.string(from: item!.date)
-
         let dateLabel = TSLabel()
         dateLabel.font = UIFont.preferredFont(forTextStyle: .caption1)
-        dateLabel.text = formattedDate
+        dateLabel.text = item?.dateString
 
         descriptionLabels.append(dateLabel)
 
