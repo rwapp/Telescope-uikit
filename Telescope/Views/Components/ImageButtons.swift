@@ -71,17 +71,17 @@ final class ImageButtons {
     }
 
     @objc
-    private func saveImage() {
+    func saveImage() {
         viewModel.saveImage()
     }
 
     @objc
-    private func shareImage() {
+    func shareImage() {
         viewModel.shareImage()
     }
 
     @objc
-    private func favouriteImage() {
+    func favouriteImage() {
         viewModel.favouriteImage()
     }
 }
