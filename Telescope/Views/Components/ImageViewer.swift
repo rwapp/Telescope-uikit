@@ -50,6 +50,11 @@ final class ImageViewer: UIScrollView {
         showsVerticalScrollIndicator = false
         delegate = self
     }
+
+    override func accessibilityPerformEscape() -> Bool {
+        removeFromSuperview()
+        return true
+    }
 }
 
 extension ImageViewer: UIScrollViewDelegate {
