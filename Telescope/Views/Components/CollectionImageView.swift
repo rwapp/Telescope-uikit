@@ -11,7 +11,7 @@ import UIKit
 final class CollectionImageView: UIImageView {
 
     weak var parentCell: ImageCollectionViewCell? {
-        superview?.superview?.superview
+        superview?.superview?.superview as? ImageCollectionViewCell
     }
 
     convenience init() {
