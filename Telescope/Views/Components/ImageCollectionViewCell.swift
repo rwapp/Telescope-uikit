@@ -11,11 +11,10 @@ final class ImageCollectionViewCell: UICollectionViewCell {
 
     static let reuseIdentifier = "ImageCollectionViewCell"
 
-    private let favourites = FavouriteStorage()
     private lazy var imageButtonViewModel = ImageButtonsViewModel()
     private lazy var imageButtons = ImageButtons(viewModel: imageButtonViewModel)
     private lazy var buttonStack = imageButtons.buttonStack
-    private lazy var imageView = CollectionImageView()
+    private(set) lazy var imageView = CollectionImageView()
     private let titleLabel = TSLabel()
     private var viewModel: ImageCollectionViewCellViewModel?
 
