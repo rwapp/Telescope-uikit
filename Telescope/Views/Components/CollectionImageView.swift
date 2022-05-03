@@ -10,6 +10,10 @@ import UIKit
 
 final class CollectionImageView: UIImageView {
 
+    weak var parentCell: ImageCollectionViewCell? {
+        superview?.superview?.superview
+    }
+
     convenience init() {
         self.init(frame: .zero)
 
