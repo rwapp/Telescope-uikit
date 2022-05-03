@@ -29,7 +29,7 @@ final class ImageCollectionViewCellViewModel {
             guard let image = image else { return }
             self.image = image
 
-            DispatchQueue.main.async { [weak self] in
+            await MainActor.run { [weak self] in
                 self?.showImage()
             }
         }

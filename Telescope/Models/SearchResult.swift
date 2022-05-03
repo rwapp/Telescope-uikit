@@ -40,6 +40,9 @@ struct Datum: Codable {
 
 struct Link: Codable {
     let href: String
+    var urlEncodedHref: String? {
+        href.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+    }
     let rel: String
     let render: String?
 }

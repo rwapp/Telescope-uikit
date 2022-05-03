@@ -142,7 +142,7 @@ final class ImageDetailViewController: UIViewController {
             let (image, _) = await FetchImage.fetchImage(url: url)
             guard let image = image else { return }
 
-            DispatchQueue.main.async { [weak self] in
+            await MainActor.run { [weak self] in
                 self?.imageView.image = image
                 self?.imageButtonViewModel.image = image
                 self?.image = image

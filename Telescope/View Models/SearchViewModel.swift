@@ -30,9 +30,9 @@ final class SearchViewModel {
             }
 
             self?.photos = results?.collection.items
-                .filter { !$0.links.isEmpty && !$0.data.isEmpty }
+                .filter { !$0.links.isEmpty && !$0.data.isEmpty && $0.links.first?.urlEncodedHref != nil }
                 .map {
-                    ImageItem(imageURL: $0.links.first!.href,
+                    ImageItem(imageURL: $0.links.first!.urlEncodedHref!,
                               title: $0.data.first!.title,
                               description: $0.data.first?.datumDescription,
                               center: $0.data.first?.center,
@@ -40,7 +40,7 @@ final class SearchViewModel {
                               nasaID: $0.data.first!.nasaID)
                 } ?? []
 
-            DispatchQueue.main.async { [weak self] in
+            await MainActor.run { [weak self] in
                 self?.showHint(self?.photos.isEmpty ?? true)
                 self?.reloadResults()
             }
