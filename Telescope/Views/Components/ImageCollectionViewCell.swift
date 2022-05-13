@@ -39,6 +39,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
 
         viewModel.getImage()
         setupView()
+        setupAxActions()
     }
 
     private func setupView() {
@@ -77,5 +78,28 @@ final class ImageCollectionViewCell: UICollectionViewCell {
             titleLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor)
         ])
+    }
+
+    private func setupAxActions() {
+
+        let likeAction = UIAccessibilityCustomAction(name: "Like",
+                                                     image: UIImage(systemName: "heart")) { [weak self] _ in
+            self?.imageButtonViewModel.favouriteImage()
+            return true
+        }
+
+        let shareAction = UIAccessibilityCustomAction(name: "Share",
+                                                      image: UIImage(systemName: "square.and.arrow.up")) { [weak self] _ in
+            self?.imageButtonViewModel.shareImage()
+            return true
+        }
+
+        let saveAction = UIAccessibilityCustomAction(name: "Save",
+                                                     image: UIImage(systemName: "square.and.arrow.down")) { [weak self] _ in
+            self?.imageButtonViewModel.saveImage()
+            return true
+        }
+
+        accessibilityCustomActions = [likeAction, shareAction, saveAction]
     }
 }
