@@ -110,6 +110,7 @@ final class SearchViewController: UIViewController {
             snapshot.appendItems(items)
 
             self.dataSource.apply(snapshot)
+            self.accessibilityCustomRotors = [self.customRotors(imageItems: items)]
         }
 
         viewModel.presentDetail = { [weak self] item in
@@ -134,6 +135,67 @@ final class SearchViewController: UIViewController {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
+    }
+
+    private func customRotors(imageItems: [ImageItem]) -> UIAccessibilityCustomRotor {
+        UIAccessibilityCustomRotor(name: "Liked") { [weak self] predicate in
+            guard let self = self,
+                  let currentCell = predicate.currentItem.targetElement as? UICollectionViewCell,
+                  let currentIndex = self.collectionView.indexPath(for: currentCell) else {
+                return nil
+            }
+
+            var nextIndex: IndexPath
+            switch predicate.searchDirection {
+            case .next:
+
+                // get the next item in our datasource that matches
+                // check we're not at the end of the data
+                guard currentIndex.item < imageItems.count - 1,
+                      // get our data from the current index + 1
+                      let nextItem = imageItems.suffix(from: currentIndex.item + 1)
+                        // get the first liked
+                    .first(where: { $0.liked }),
+                      // get the index of this item in our datasource
+                      let itemIndex = imageItems.firstIndex(of: nextItem) else {
+                    return nil
+                }
+
+                // convert the index in our data to an index in our collection view
+                nextIndex = IndexPath(item: itemIndex, section: currentIndex.section)
+
+            case .previous:
+
+                // get the previous item in our datasource that matches
+                // check we're not at the start of the data
+                guard currentIndex.item > 0,
+                      // get our data from the current index - 1
+                      let nextItem = imageItems.prefix(upTo: currentIndex.item)
+                        // reverse the data
+                    .reversed()
+                        // get the first liked
+                    .first(where: { $0.liked }),
+                      // get the index of this item in our datasource
+                      let itemIndex = imageItems.firstIndex(of: nextItem) else {
+                    return nil
+                }
+
+                // convert the index in our data to an index in our collection view
+                nextIndex = IndexPath(item: itemIndex, section: currentIndex.section)
+
+            @unknown default:
+                fatalError()
+            }
+
+            // If the view hasn't yet been loaded by the collection view this will return nil
+            // even if there are further matching items in your data
+            guard let nextCell = self.collectionView.cellForItem(at: nextIndex) as? ImageCollectionViewCell else {
+                return nil
+            }
+
+            return UIAccessibilityCustomRotorItemResult(targetElement: nextCell,
+                                                        targetRange: nil)
+        }
     }
 }
 
