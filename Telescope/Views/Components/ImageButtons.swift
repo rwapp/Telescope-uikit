@@ -63,11 +63,6 @@ final class ImageButtons {
         let imageName = liked ? "heart.fill" : "heart"
         likeButton.setImage(UIImage(systemName: imageName), for: .normal)
         likeButton.accessibilityLabel = liked ? "Liked" : "Like"
-        if liked {
-            likeButton.accessibilityTraits.insert(.selected)
-        } else {
-            likeButton.accessibilityTraits.remove(.selected)
-        }
     }
 
     @objc

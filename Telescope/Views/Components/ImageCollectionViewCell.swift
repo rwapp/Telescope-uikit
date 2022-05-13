@@ -30,6 +30,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
 
         viewModel.showLikeStatus = { [weak self] in
             self?.imageButtons.setLikeStatus(viewModel.item.liked)
+            self?.accessibilityValue = viewModel.item.liked ? "Liked" : ""
         }
 
         imageButtonViewModel.item = viewModel.item
@@ -50,6 +51,12 @@ final class ImageCollectionViewCell: UICollectionViewCell {
 
         titleLabel.text = viewModel?.item.title
         contentContainer.addSubview(titleLabel)
+
+        isAccessibilityElement = true
+        accessibilityLabel = viewModel?.item.title
+        accessibilityTraits.insert(.button)
+        accessibilityTraits.insert(.image)
+        accessibilityValue = viewModel?.item.liked ?? false ? "Liked" : ""
 
         NSLayoutConstraint.activate([
             contentContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
