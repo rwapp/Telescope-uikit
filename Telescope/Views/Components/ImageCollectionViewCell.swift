@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ImageCollectionViewCell: UICollectionViewCell {
+final class ImageCollectionViewCell: UICollectionViewCell, AXCustomContentProvider {
 
     static let reuseIdentifier = "ImageCollectionViewCell"
 
@@ -17,6 +17,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     private(set) lazy var imageView = CollectionImageView()
     private let titleLabel = TSLabel()
     private var viewModel: ImageCollectionViewCellViewModel?
+    var accessibilityCustomContent = [AXCustomContent]()
 
     func setViewModel(_ viewModel: ImageCollectionViewCellViewModel) {
         self.viewModel = viewModel
@@ -40,6 +41,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         viewModel.getImage()
         setupView()
         setupAxActions()
+        setupCustomContent()
     }
 
     private func setupView() {
@@ -101,5 +103,26 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         }
 
         accessibilityCustomActions = [likeAction, shareAction, saveAction]
+    }
+
+    private func setupCustomContent() {
+        var customContent = [AXCustomContent]()
+
+        if let date = viewModel?.item.dateString {
+            let dateContent = AXCustomContent(label: "Date", value: date)
+            customContent.append(dateContent)
+        }
+
+        if let description = viewModel?.item.description {
+            let descriptionContent = AXCustomContent(label: "Description", value: description)
+            customContent.append(descriptionContent)
+        }
+
+        if let center = viewModel?.item.center {
+            let descriptionContent = AXCustomContent(label: "NASA center", value: center)
+            customContent.append(descriptionContent)
+        }
+
+        accessibilityCustomContent = customContent
     }
 }
